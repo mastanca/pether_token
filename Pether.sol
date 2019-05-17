@@ -11,6 +11,7 @@ contract Pether is ERC20Interface, Owned {
     string public  name;
     uint8 public decimals;
     uint _totalSupply;
+    uint price;
 
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
@@ -55,6 +56,12 @@ contract Pether is ERC20Interface, Owned {
         balances[to] = balances[to].add(tokens);
         emit Transfer(from, to, tokens);
         return true;
+    }
+
+    function buyPethers(uint _amount) public payable {
+        require(_amount.mul(price) == msg.value);
+        require(balanceOf(owner) >= _amount);
+        transfer(msg.sender, _amount);
     }
 
 }
