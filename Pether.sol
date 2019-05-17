@@ -61,7 +61,7 @@ contract Pether is ERC20Interface, Owned {
     function buyPethers(uint _amount) public payable {
         require(_amount.mul(price) == msg.value);
         require(balanceOf(owner) >= _amount);
-        transfer(msg.sender, _amount);
+        require(transfer(msg.sender, _amount));
     }
 
 }
