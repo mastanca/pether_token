@@ -22,6 +22,7 @@ contract Pether is ERC20Interface, Owned {
         decimals = 18;
         _totalSupply = 1000000 * 10**uint(decimals);
         balances[owner] = _totalSupply;
+        price = 1;
         emit Transfer(address(0), owner, _totalSupply);
     }
 
@@ -58,10 +59,21 @@ contract Pether is ERC20Interface, Owned {
         return true;
     }
 
-    function buyPethers(uint _amount) public payable {
-        require(_amount.mul(price) == msg.value);
-        require(balanceOf(owner) >= _amount);
-        require(transfer(msg.sender, _amount));
+    function buyPethers(uint amount) public payable {
+        require(amount.mul(price) == msg.value);
+        require(balanceOf(owner) >= amount);
+        require(transfer(msg.sender, amount));
+        price += 1;
+    }
+
+    function sellPethers(uint amount) public {
+        require(balances[msg.sender] >= amount);
+        require(transfer(owner, amount)); // Check if this works ok
+        uint amountEther = amount.mul(price).div(10**uint(decimals));
+        msg.sender.transfer(amountEther);
+        if (price > 0) {
+            price -= 1;
+        }
     }
 
 }
