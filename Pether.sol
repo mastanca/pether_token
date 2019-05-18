@@ -1,10 +1,10 @@
 pragma solidity ^0.5.8;
 
 import "./ERC20Interface.sol";
-import "./Owned.sol";
 import "./SafeMath.sol";
+import "./ROFEXStyle.sol";
 
-contract Pether is ERC20Interface, Owned {
+contract Pether is ERC20Interface, ROFEXStyle {
     using SafeMath for uint;
 
     string public symbol;
@@ -59,21 +59,25 @@ contract Pether is ERC20Interface, Owned {
         return true;
     }
 
+    // TODO: Save date and price
     function buyPethers(uint amount) public payable {
         require(amount.mul(price) == msg.value);
         require(balanceOf(owner) >= amount);
         require(transfer(msg.sender, amount));
-        price += 1;
+        price++;
+        transactionCount++;
     }
 
+    // TODO: Save date and price
     function sellPethers(uint amount) public {
         require(balances[msg.sender] >= amount);
         require(transfer(owner, amount)); // Check if this works ok
         uint amountEther = amount.mul(price).div(10**uint(decimals));
         msg.sender.transfer(amountEther);
         if (price > 0) {
-            price -= 1;
+            price--;
         }
+        transactionCount++;
     }
 
 }
