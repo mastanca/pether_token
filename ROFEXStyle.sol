@@ -29,6 +29,8 @@ contract ROFEXStyle is Owned {
 
     constructor() public {
         transactionCount = 0;
+        m = 0;
+        b = 0;
     }
 
     function ejecutarRegresion() public {
