@@ -56,7 +56,7 @@ contract ROFEXStyle is Owned {
     }
 
     function calcularValorFuturo(uint fecha) public view returns (uint) {
-        // TODO: Implement me
+        return b.add(m.mul(fecha));
     }
 
     function comprarMonedaFutura(uint fecha, uint cantidad) public payable {
