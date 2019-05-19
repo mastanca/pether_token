@@ -85,6 +85,8 @@ contract ROFEXStyle is Owned {
         we have to loop the first time to get the actual size of the returned array
         and then another time to build it.
         Also there's is no push for local arrays, so we need the reset of count.
+        Would love to use a mapping(address => FutureTransaction[]) but we need all of them
+        for the owner to execute consultarTodasLasComprasFuturas.
      */
     function getFuturesFor(address buyer) private view returns (FutureTransaction[] memory) {
         uint count = 0;
