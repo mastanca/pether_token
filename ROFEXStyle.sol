@@ -18,6 +18,7 @@ contract ROFEXStyle is Owned {
         uint qty;
         uint date;
         bool ready;
+        bool executed;
         address buyer;
     }
 
@@ -69,13 +70,13 @@ contract ROFEXStyle is Owned {
             "Parameter 'fecha' must be in the future"
         );
         uint futurePrice = calcularValorFuturo(fecha);
-        futureTransactions.push(FutureTransaction(futurePrice, cantidad, fecha, false, msg.sender));
+        futureTransactions.push(FutureTransaction(futurePrice, cantidad, fecha, false, false, msg.sender));
     }
 
     function consultarMisComprasFuturas() public view returns (FutureTransaction[] memory){
         FutureTransaction[] memory futures = getFuturesFor(msg.sender);
         for (uint index = 0; index < futures.length; index++) {
-            if (futures[index].date > now) {
+            if (futures[index].date < now) {
                 futures[index].ready = true;
             }
         }
@@ -97,22 +98,48 @@ contract ROFEXStyle is Owned {
                 count++;
             }
         }
-        count = 0;
         FutureTransaction[] memory futures = new FutureTransaction[](count);
+        count = 0;
         for (uint index = 0; index < futureTransactions.length; index++) {
             if (futureTransactions[index].buyer == buyer) {
-                futures[0] = futureTransactions[index];
+                futures[count++] = futureTransactions[index];
             }
         }
         return futures;
     }
 
-    function consultarTodasLasComprasFuturas() public view onlyOwner {
-        // TODO: Implement me
+    /**
+     * Similar to getFuturesFor(...), but holded transactions are the ones
+     * ready but not yet executed
+    */
+    function getHoldedFor(address owner) private view returns (FutureTransaction[] memory) {
+        uint count = 0;
+        for (uint index = 0; index < futureTransactions.length; index++) {
+            FutureTransaction memory ft = futureTransactions[index];
+            if (ft.buyer == owner && ft.date < now && !ft.executed) {
+                count++;
+            }
+        }
+        FutureTransaction[] memory futures = new FutureTransaction[](count);
+        count = 0;
+        for (uint index = 0; index < futureTransactions.length; index++) {
+            FutureTransaction memory ft = futureTransactions[index];
+            if (ft.buyer == owner && ft.date < now && !ft.executed) {
+                futures[count++] = futureTransactions[index];
+            }
+        }
+        return futures;
+    }
+    
+    function consultarTodasLasComprasFuturas() public view onlyOwner returns (FutureTransaction[] memory) {
+        return getHoldedFor(msg.sender);
     }
 
     function ejecutarMisContratos() public {
-        // TODO: Implement me
+        FutureTransaction[] memory transactions = getHoldedFor(msg.sender);
+        for (uint i = 0; i < transactions.length; i++) {
+            // TODO: execute transaction (how??)
+        }
     }
 
     function ejecutarTodosLosContratos() public onlyOwner {
@@ -137,3 +164,4 @@ contract ROFEXStyle is Owned {
     }
 
 }
+
