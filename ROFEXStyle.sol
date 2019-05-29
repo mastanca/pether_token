@@ -19,7 +19,7 @@ contract ROFEXStyle is Owned {
         uint date;
         bool ready;
         bool executed;
-        address buyer;
+        address payable buyer;
     }
 
     uint transactionCount;
@@ -144,15 +144,15 @@ contract ROFEXStyle is Owned {
 
     function ejecutarTodosLosContratos() public onlyOwner {
         for (uint i = 0; i < futureTransactions.length; i++) {
-            FutureTransaction ft = futureTransactions[i];
+            FutureTransaction memory ft = futureTransactions[i];
             if (ft.date < now && !ft.executed) {
                 executeFutureTransaction(ft);
             }
         }
     }
     
-    function executeFutureTransaction(FutureTransaction ft) private {
-        ft.buyer(ft.qty);
+    function executeFutureTransaction(FutureTransaction memory ft) private {
+        ft.buyer.transfer(ft.qty);
         ft.executed = true;
     }
 
