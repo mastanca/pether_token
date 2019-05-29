@@ -1,4 +1,4 @@
-pragma solidity ^0.5.8;
+pragma solidity ^0.4.26;
 
 import "./ERC20Interface.sol";
 import "./ROFEXStyle.sol";
@@ -57,7 +57,6 @@ contract Pether is ERC20Interface, ROFEXStyle {
         return true;
     }
 
-    // TODO: Save date and price
     function buyPethers(uint amount) public payable {
         require(amount.mul(price) == msg.value);
         require(balanceOf(owner) >= amount);
@@ -67,10 +66,9 @@ contract Pether is ERC20Interface, ROFEXStyle {
         recordNewTransaction(price);
     }
 
-    // TODO: Save date and price
     function sellPethers(uint amount) public {
         require(balances[msg.sender] >= amount);
-        require(transfer(owner, amount)); // Check if this works ok
+        require(transfer(owner, amount));
         uint amountEther = amount.mul(price).div(10**uint(decimals));
         msg.sender.transfer(amountEther);
         alterPriceDown();

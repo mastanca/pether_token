@@ -1,4 +1,4 @@
-pragma solidity ^0.5.8;
+pragma solidity ^0.4.26;
 // To return array of futureTransactions to client
 pragma experimental ABIEncoderV2;
 
@@ -19,7 +19,7 @@ contract ROFEXStyle is Owned {
         uint date;
         bool ready;
         bool executed;
-        address payable buyer;
+        address buyer;
     }
 
     uint transactionCount;
@@ -100,9 +100,9 @@ contract ROFEXStyle is Owned {
         }
         FutureTransaction[] memory futures = new FutureTransaction[](count);
         count = 0;
-        for (uint index = 0; index < futureTransactions.length; index++) {
-            if (futureTransactions[index].buyer == buyer) {
-                futures[count++] = futureTransactions[index];
+        for (uint j = 0; j < futureTransactions.length; j++) {
+            if (futureTransactions[j].buyer == buyer) {
+                futures[count++] = futureTransactions[j];
             }
         }
         return futures;
@@ -122,10 +122,10 @@ contract ROFEXStyle is Owned {
         }
         FutureTransaction[] memory futures = new FutureTransaction[](count);
         count = 0;
-        for (uint index = 0; index < futureTransactions.length; index++) {
-            FutureTransaction memory ft = futureTransactions[index];
-            if (ft.buyer == owner && ft.date < now && !ft.executed) {
-                futures[count++] = futureTransactions[index];
+        for (uint j = 0; j < futureTransactions.length; j++) {
+            FutureTransaction memory ft2 = futureTransactions[j];
+            if (ft2.buyer == owner && ft2.date < now && !ft2.executed) {
+                futures[count++] = futureTransactions[j];
             }
         }
         return futures;
