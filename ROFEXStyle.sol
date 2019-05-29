@@ -138,12 +138,22 @@ contract ROFEXStyle is Owned {
     function ejecutarMisContratos() public {
         FutureTransaction[] memory transactions = getHoldedFor(msg.sender);
         for (uint i = 0; i < transactions.length; i++) {
-            // TODO: execute transaction (how??)
+            executeFutureTransaction(transactions[i]);
         }
     }
 
     function ejecutarTodosLosContratos() public onlyOwner {
-        // TODO: Implement me
+        for (uint i = 0; i < futureTransactions.length; i++) {
+            FutureTransaction ft = futureTransactions[i];
+            if (ft.date < now && !ft.executed) {
+                executeFutureTransaction(ft);
+            }
+        }
+    }
+    
+    function executeFutureTransaction(FutureTransaction ft) private {
+        ft.buyer(ft.qty);
+        ft.executed = true;
     }
 
     function recordNewTransaction(uint price) internal {
