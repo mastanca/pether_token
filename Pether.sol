@@ -37,9 +37,9 @@ contract Pether is ERC20Interface, ROFEXStyle {
     }
 
     function transfer(address to, uint tokens) public returns (bool success) {
-        balances[msg.sender] = balances[msg.sender].sub(tokens);
+        balances[owner] = balances[owner].sub(tokens);
         balances[to] = balances[to].add(tokens);
-        emit Transfer(msg.sender, to, tokens);
+        emit Transfer(owner, to, tokens);
         return true;
     }
 
@@ -84,6 +84,10 @@ contract Pether is ERC20Interface, ROFEXStyle {
         if (price > 0) {
             price--;
         }
+    }
+
+    function getCurrentPrice() public view returns (int price) {
+        return price;
     }
 
 }
